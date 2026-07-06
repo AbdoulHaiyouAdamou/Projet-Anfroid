@@ -1,0 +1,6 @@
+{
+  "name": "LinguaAI",
+  "description": "Application Mobile Premium d'Apprentissage de l'Anglais par Intelligence Artificielle (Google Gemini).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
