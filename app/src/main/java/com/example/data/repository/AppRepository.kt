@@ -112,7 +112,7 @@ class AppRepository(private val database: AppDatabase) {
         tutorPersonality: String,
         userMessage: String,
         userLevel: String,
-        modelName: String = "gemini-3.5-flash",
+        modelName: String = "gemini-2.5-flash",
         customAccent: String? = null
     ): ChatHistory {
         val apiKey = BuildConfig.GEMINI_API_KEY
@@ -122,7 +122,7 @@ class AppRepository(private val database: AppDatabase) {
             // Simulator fallbacks (Beautiful offline simulator)
             val responseText = simulateTutorReply(tutorId, userMessage, userLevel)
             val (correction, correctedText) = simulateCorrectionWithPerfectText(userMessage)
-            
+
             val chatReply = ChatHistory(
                 tutorId = tutorId,
                 message = responseText,
@@ -147,12 +147,12 @@ class AppRepository(private val database: AppDatabase) {
             1. Analyze it for any grammatical, spelling, or styling errors in English. If there are any mistakes, explain them briefly and clearly in French (no more than 2 short sentences). If there are no mistakes, provide null.
             2. Provide the corrected/improved version of the user sentence in English in the "correctedText" field. If there are no mistakes, provide null.
             3. Reply to their chat in character, using natural English vocabulary appropriate for their level ($userLevel).
-            
+
             You MUST return as a valid JSON object with EXACTLY these fields:
             - "correction": (string, brief explanation of mistakes in French, or null if correct)
             - "correctedText": (string, the perfect corrected English phrase, or null if correct)
             - "reply": (string, your in-character natural English response)
-            
+
             Do not enclose in markdown code tags. Return pure valid JSON string only.
         """.trimIndent()
 
@@ -168,8 +168,10 @@ class AppRepository(private val database: AppDatabase) {
         )
 
         try {
-            // Call Retrofit service with dynamically configured model
-            val activeModelName = if (modelName == "gemini-3.1-pro-preview") "gemini-3.1-pro-preview" else "gemini-3.5-flash"
+            // Map any stored preference to a currently-valid Gemini model name.
+            // NOTE: gemini-3.5-flash / gemini-3.1-pro-preview do not exist and caused
+            // every real call to fail and silently fall back to the offline simulator.
+            val activeModelName = if (modelName.contains("pro")) "gemini-2.5-pro" else "gemini-2.5-flash"
             val response = RetrofitClient.service.generateContent(activeModelName, apiKey, request)
             val jsonText = response.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
             Log.d("LinguaAI_Repo", "Received from Gemini ($activeModelName): $jsonText")
@@ -260,10 +262,10 @@ class AppRepository(private val database: AppDatabase) {
             }
             "emma" -> { // UK
                 when {
-                    msg.contains("hello") || msg.contains("hi") -> "Hello, lovely to meet you. I hope your day is going exceptionally well! Shalt we discuss some British culture, or would you prefer a general topic?"
+                    msg.contains("hello") || msg.contains("hi") -> "Hello, lovely to meet you. I hope your day is going exceptionally well! Shall we discuss some British culture, or would you prefer a general topic?"
                     msg.contains("how are you") -> "I am very well indeed, thank you for asking. I am currently sipping some wonderful tea. What about you?"
-                    msg.contains("thank") -> "You are most welcome. It is a absolute pleasure to assist you on this lovely journey."
-                    else -> "Splendid statement! Conversing in English really is an art, and you are doing marvelous. Let us continue, shall we?"
+                    msg.contains("thank") -> "You are most welcome. It is an absolute pleasure to assist you on this lovely journey."
+                    else -> "Splendid statement! Conversing in English really is an art, and you are doing marvellously. Let us continue, shall we?"
                 }
             }
             "sophie" -> { // Canada
@@ -277,7 +279,7 @@ class AppRepository(private val database: AppDatabase) {
                 when {
                     msg.contains("hello") || msg.contains("hi") -> "Good day. Let's make our practice efficient. Our focus today: mastering clear corporate messaging and negotiation skills. State your current career targets."
                     msg.contains("how are you") -> "My performance metrics are optimal today. Proceed with our conversation. Time is resources."
-                    else -> "Acknowledge received. A strong business executive must articulate ideas cleanly. Let's practice phrasing that to sound more assertive."
+                    else -> "Acknowledgement received. A strong business executive must articulate ideas cleanly. Let's practice phrasing that to sound more assertive."
                 }
             }
             else -> "Hello there! Let's continue practicing. Tell me about your goals!"
