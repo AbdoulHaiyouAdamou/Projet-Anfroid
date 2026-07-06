@@ -67,8 +67,10 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun MyApplicationTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Couleur dynamique (Material You) activée par défaut sur Android 12+.
-    dynamicColor: Boolean = true,
+    // Couleur dynamique (Material You) désactivée par défaut : on veut afficher
+    // l'identité de marque LinguaAI (indigo), pas les couleurs du fond d'écran.
+    // Pourra devenir une option utilisateur plus tard.
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val colorScheme = when {
