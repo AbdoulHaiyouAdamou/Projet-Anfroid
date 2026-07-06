@@ -26,24 +26,25 @@ français, puis le tuteur répond en anglais naturel adapté à ton niveau CEFR.
 - **Architecture** : MVVM (ViewModel + Repository)
 - **Persistance** : Room
 - **Réseau** : Retrofit + OkHttp + Moshi
-- **IA** : Google Gemini API (`gemini-2.5-flash` / `gemini-2.5-pro`)
+- **IA** : Google Gemini API — `gemini-3.5-flash` (réponses rapides) et `gemini-3.1-pro-preview` (mode avancé / conversations profondes)
 
 ## Lancer le projet en local
 
 **Prérequis :** [Android Studio](https://developer.android.com/studio)
 
 1. Ouvre le projet dans Android Studio et laisse-le importer/synchroniser Gradle.
-2. Crée un fichier `.env` à la racine et renseigne ta clé Gemini :
-   ```
-   GEMINI_API_KEY=ta_clé_ici
-   ```
-   (voir `.env.example`). Sans clé valide, l'app bascule sur le simulateur hors-ligne.
+2. Ajoute ta clé Gemini nommée `GEMINI_API_KEY` dans le panneau **Secrets** de
+   Google AI Studio (elle est injectée au runtime via `BuildConfig.GEMINI_API_KEY`).
+   En local hors AI Studio, tu peux aussi la placer dans un fichier `.env`
+   à la racine (voir `.env.example`). Sans clé valide, l'app bascule sur le
+   simulateur hors-ligne.
 3. Lance l'app sur un émulateur ou un appareil physique.
 
 ## Roadmap / à améliorer
 
 - [ ] Découper `MainActivity.kt` (monolithe de ~150 Ko) en écrans + navigation.
-- [ ] Ne pas embarquer la clé Gemini dans l'APK : passer par un backend proxy avant publication.
+- [ ] Pour une publication Play Store hors AI Studio, prévoir un backend proxy
+      afin de ne pas embarquer la clé Gemini dans l'APK.
 - [ ] Changer le `namespace` / `applicationId` générique `com.example`.
 - [ ] Ajouter des tests unitaires (ViewModel, Repository) et UI.
 - [ ] Préparer la fiche et les assets Play Store.
