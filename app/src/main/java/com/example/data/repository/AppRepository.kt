@@ -112,7 +112,7 @@ class AppRepository(private val database: AppDatabase) {
         tutorPersonality: String,
         userMessage: String,
         userLevel: String,
-        modelName: String = "gemini-2.5-flash",
+        modelName: String = "gemini-3.5-flash",
         customAccent: String? = null
     ): ChatHistory {
         val apiKey = BuildConfig.GEMINI_API_KEY
@@ -168,10 +168,8 @@ class AppRepository(private val database: AppDatabase) {
         )
 
         try {
-            // Map any stored preference to a currently-valid Gemini model name.
-            // NOTE: gemini-3.5-flash / gemini-3.1-pro-preview do not exist and caused
-            // every real call to fail and silently fall back to the offline simulator.
-            val activeModelName = if (modelName.contains("pro")) "gemini-2.5-pro" else "gemini-2.5-flash"
+            // Call Retrofit service with dynamically configured model
+            val activeModelName = if (modelName == "gemini-3.1-pro-preview") "gemini-3.1-pro-preview" else "gemini-3.5-flash"
             val response = RetrofitClient.service.generateContent(activeModelName, apiKey, request)
             val jsonText = response.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
             Log.d("LinguaAI_Repo", "Received from Gemini ($activeModelName): $jsonText")
