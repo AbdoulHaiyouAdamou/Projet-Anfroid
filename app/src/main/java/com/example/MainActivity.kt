@@ -158,138 +158,9 @@ fun MainScreen(
             )
         },
         bottomBar = {
-            NavigationBar(
-                windowInsets = WindowInsets.navigationBars,
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                tonalElevation = 0.dp
-            ) {
-                NavigationBarItem(
-                    selected = selectedTab is LinguaViewModel.Tab.Home,
-                    onClick = { viewModel.selectTab(LinguaViewModel.Tab.Home) },
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-                    label = { Text("Accueil", fontSize = 11.sp, maxLines = 1, fontWeight = FontWeight.Bold) },
-                    modifier = Modifier.testTag("nav_home_btn")
-                )
-                NavigationBarItem(
-                    selected = selectedTab is LinguaViewModel.Tab.Learn,
-                    onClick = { viewModel.selectTab(LinguaViewModel.Tab.Learn) },
-                    icon = { Icon(Icons.Default.School, contentDescription = "Learn") },
-                    label = { Text("Apprendre", fontSize = 11.sp, maxLines = 1, fontWeight = FontWeight.Bold) },
-                    modifier = Modifier.testTag("nav_learn_btn")
-                )
-                NavigationBarItem(
-                    selected = selectedTab is LinguaViewModel.Tab.Speak,
-                    onClick = { viewModel.selectTab(LinguaViewModel.Tab.Speak) },
-                    icon = { Icon(Icons.Default.Forum, contentDescription = "Speak") },
-                    label = { Text("Converser", fontSize = 11.sp, maxLines = 1, fontWeight = FontWeight.Bold) },
-                    modifier = Modifier.testTag("nav_speak_btn")
-                )
-                NavigationBarItem(
-                    selected = selectedTab is LinguaViewModel.Tab.Progress,
-                    onClick = { viewModel.selectTab(LinguaViewModel.Tab.Progress) },
-                    icon = { Icon(Icons.Default.TrendingUp, contentDescription = "Progress") },
-                    label = { Text("Progrès", fontSize = 11.sp, maxLines = 1, fontWeight = FontWeight.Bold) },
-                    modifier = Modifier.testTag("nav_progress_btn")
-                )
-                NavigationBarItem(
-                    selected = selectedTab is LinguaViewModel.Tab.Community,
-                    onClick = { viewModel.selectTab(LinguaViewModel.Tab.Community) },
-                    icon = { Icon(Icons.Default.Groups, contentDescription = "Community") },
-                    label = { Text("Social", fontSize = 11.sp, maxLines = 1, fontWeight = FontWeight.Bold) },
-                    modifier = Modifier.testTag("nav_social_btn")
-                )
-            }
-        }
-
-        @OptIn(ExperimentalMaterial3Api::class)
-        @Composable
-        private fun LinguaTopAppBar(
-            streak: Int,
-            coins: Int,
-            currentLevel: String,
-            onStreakClick: () -> Unit,
-            onCoinsClick: () -> Unit,
-            onLevelClick: () -> Unit
-        ) {
-            TopAppBar(
-                title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = "LinguaAI",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 24.sp,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                    }
-                },
-                actions = {
-                    Row(
-                        modifier = Modifier
-                            .clickable { onStreakClick() }
-                            .background(
-                                MaterialTheme.colorScheme.surfaceVariant,
-                                RoundedCornerShape(12.dp)
-                            )
-                            .padding(horizontal = 10.dp, vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("🔥", fontSize = 14.sp)
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "$streak J",
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            fontSize = 12.sp
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Row(
-                        modifier = Modifier
-                            .clickable { onCoinsClick() }
-                            .background(
-                                MaterialTheme.colorScheme.surfaceVariant,
-                                RoundedCornerShape(12.dp)
-                            )
-                            .padding(horizontal = 10.dp, vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("🪙", fontSize = 14.sp)
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "$coins",
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            fontSize = 12.sp
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(6.dp))
-                    OutlinedButton(
-                        onClick = onLevelClick,
-                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 2.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                            contentColor = MaterialTheme.colorScheme.onSurface
-                        ),
-                        modifier = Modifier
-                            .height(32.dp)
-                            .testTag("header_level_badge")
-                    ) {
-                        Text(
-                            text = currentLevel,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(16.dp))
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    scrolledContainerColor = MaterialTheme.colorScheme.surfaceVariant
-                )
+            LinguaBottomNavigationBar(
+                selectedTab = selectedTab,
+                onSelectTab = viewModel::selectTab
             )
         }
     ) { innerPadding ->
@@ -405,6 +276,146 @@ fun MainScreen(
             confirmButton = {
                 Button(onClick = { showStreakInfoDialog = false }) { Text("Continuer !") }
             }
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun LinguaTopAppBar(
+    streak: Int,
+    coins: Int,
+    currentLevel: String,
+    onStreakClick: () -> Unit,
+    onCoinsClick: () -> Unit,
+    onLevelClick: () -> Unit
+) {
+    TopAppBar(
+        title = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "LinguaAI",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
+        },
+        actions = {
+            Row(
+                modifier = Modifier
+                    .clickable { onStreakClick() }
+                    .background(
+                        MaterialTheme.colorScheme.surfaceVariant,
+                        RoundedCornerShape(12.dp)
+                    )
+                    .padding(horizontal = 10.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("🔥", fontSize = 14.sp)
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = "$streak J",
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 12.sp
+                )
+            }
+            Spacer(modifier = Modifier.width(6.dp))
+            Row(
+                modifier = Modifier
+                    .clickable { onCoinsClick() }
+                    .background(
+                        MaterialTheme.colorScheme.surfaceVariant,
+                        RoundedCornerShape(12.dp)
+                    )
+                    .padding(horizontal = 10.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("🪙", fontSize = 14.sp)
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = "$coins",
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 12.sp
+                )
+            }
+            Spacer(modifier = Modifier.width(6.dp))
+            OutlinedButton(
+                onClick = onLevelClick,
+                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 2.dp),
+                shape = RoundedCornerShape(12.dp),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                ),
+                modifier = Modifier
+                    .height(32.dp)
+                    .testTag("header_level_badge")
+            ) {
+                Text(
+                    text = currentLevel,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            scrolledContainerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+    )
+}
+
+@Composable
+private fun LinguaBottomNavigationBar(
+    selectedTab: LinguaViewModel.Tab,
+    onSelectTab: (LinguaViewModel.Tab) -> Unit
+) {
+    NavigationBar(
+        windowInsets = WindowInsets.navigationBars,
+        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        tonalElevation = 0.dp
+    ) {
+        NavigationBarItem(
+            selected = selectedTab is LinguaViewModel.Tab.Home,
+            onClick = { onSelectTab(LinguaViewModel.Tab.Home) },
+            icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
+            label = { Text("Accueil", fontSize = 11.sp, maxLines = 1, fontWeight = FontWeight.Bold) },
+            modifier = Modifier.testTag("nav_home_btn")
+        )
+        NavigationBarItem(
+            selected = selectedTab is LinguaViewModel.Tab.Learn,
+            onClick = { onSelectTab(LinguaViewModel.Tab.Learn) },
+            icon = { Icon(Icons.Default.School, contentDescription = "Learn") },
+            label = { Text("Apprendre", fontSize = 11.sp, maxLines = 1, fontWeight = FontWeight.Bold) },
+            modifier = Modifier.testTag("nav_learn_btn")
+        )
+        NavigationBarItem(
+            selected = selectedTab is LinguaViewModel.Tab.Speak,
+            onClick = { onSelectTab(LinguaViewModel.Tab.Speak) },
+            icon = { Icon(Icons.Default.Forum, contentDescription = "Speak") },
+            label = { Text("Converser", fontSize = 11.sp, maxLines = 1, fontWeight = FontWeight.Bold) },
+            modifier = Modifier.testTag("nav_speak_btn")
+        )
+        NavigationBarItem(
+            selected = selectedTab is LinguaViewModel.Tab.Progress,
+            onClick = { onSelectTab(LinguaViewModel.Tab.Progress) },
+            icon = { Icon(Icons.Default.TrendingUp, contentDescription = "Progress") },
+            label = { Text("Progrès", fontSize = 11.sp, maxLines = 1, fontWeight = FontWeight.Bold) },
+            modifier = Modifier.testTag("nav_progress_btn")
+        )
+        NavigationBarItem(
+            selected = selectedTab is LinguaViewModel.Tab.Community,
+            onClick = { onSelectTab(LinguaViewModel.Tab.Community) },
+            icon = { Icon(Icons.Default.Groups, contentDescription = "Community") },
+            label = { Text("Social", fontSize = 11.sp, maxLines = 1, fontWeight = FontWeight.Bold) },
+            modifier = Modifier.testTag("nav_social_btn")
         )
     }
 }
